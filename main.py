@@ -8,6 +8,10 @@ users = []
 workouts = []
 bookings = []
 
+user_id_counter = 1
+workout_id_counter = 1
+booking_id_counter = 1
+
 @app.get("/")
 def root():
     return {"message": "Hello Fitness Club"}
@@ -27,6 +31,11 @@ class Booking(BaseModel):
 
 @app.post("/users")
 def create_user(user:User):
+    global user_id_counter
+
+    user.id = user_id_counter
+    user_id_counter += 1
+
     users.append(user)
     return user
 
@@ -34,14 +43,51 @@ def create_user(user:User):
 def get_users():
     return users
 
+@app.put("/users/{user_id}")
+def update_users(user_id: int, new_user: User):
+    for user in users:
+        if user_id == user.id:
+            user.name = new_user.name
+            return user
+    raise(HTTPException(status_code = 404, detail= "User not found"))
+
+@app.delete("/users/{user_id}")
+def delete_users(user_id: int):
+    for user in users:
+        if user.id == user_id:
+            users.remove(user)
+            return "User remove"
+    raise(HTTPException(status_code = 404, detail= "User not found"))
+
 @app.get("/workouts")
 def get_workouts():
     return workouts
 
 @app.post("/workouts")
 def create_workout(workout:Workout):
+    global workout_id_counter
+
+    workout.id = workout_id_counter
+    workout_id_counter +=1
+
     workouts.append(workout)
     return workout
+
+@app.put("/workouts/{workout_id}")
+def update_workout(workout_id: int, new_workout: Workout):
+    for workout in workouts:
+        if workout.id == workout_id:
+            workout.title = new_workout.title
+            return workout
+    raise(HTTPException(status_code = 404, detail= "Workout not found"))
+
+@app.delete("/workout/{workout_id}")
+def delete_workout(workout_id):
+    for workout in workouts:
+        if workout.id == workout_id:
+            workouts.remove(workout)
+            return "Workout remove"
+    raise(HTTPException(status_code = 404, detail = "Workout not found"))
 
 @app.get("/bookings")
 def get_bookings():
@@ -65,5 +111,3 @@ def create_booking(booking:Booking):
 
     bookings.append(booking)
     return booking
-
-
