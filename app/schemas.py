@@ -42,8 +42,6 @@ class BookingBase(BaseModel):
 class BookingCreate(BookingBase):
     pass
 
-
-# 🔥 вложенные схемы
 class BookingOut(BaseModel):
     id: int
     user: UserOut
